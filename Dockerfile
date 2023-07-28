@@ -13,11 +13,14 @@ FROM alpine:3.18.2
 WORKDIR /java
 COPY /dist/*.apk .
 COPY --from=build /java .
+RUN apk add --force-overwrite --allow-untrusted *.apk
+RUN PathToJvm=$(pwd)/$(ls | grep jdk) && ln -s ${PathToJvm} /opt/jdk
+RUN PathToGlassfish=$(pwd)/$(ls | grep glassfish*) && ln -s ${PathToGlassfish} /opt/glassfish4
+ENV JAVA_HOME=/opt/jdk GF_HOME=/opt/glassfish4
+ENV PATH $PATH:${JAVA_HOME}/bin:${GF_HOME}/bin
 
-RUN apk add --force-overwrite --allow-untrusted *.apk && rm -rf *.apk
-RUN pathtojvm=$(pwd)/$(ls | grep jdk) && ln -s ${pathtojvm} /opt/jdk
-ENV JAVA_HOME=/opt/jdk
-ENV PATH $PATH:${JAVA_HOME}/bin
+
+#ENV PATH $PATH:${JAVA_HOME}/bin
 
 #ENTRYPOINT java
 #CMD [ "--version" ]
