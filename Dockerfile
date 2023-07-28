@@ -19,6 +19,7 @@ RUN PathToGlassfish=$(pwd)/$(ls | grep glassfish*) && ln -s ${PathToGlassfish} /
 ENV JAVA_HOME=/opt/jdk GF_HOME=/opt/glassfish4
 ENV PATH $PATH:${JAVA_HOME}/bin:${GF_HOME}/bin
 
+EXPOSE 4848
 
 #ENV PATH $PATH:${JAVA_HOME}/bin
 
