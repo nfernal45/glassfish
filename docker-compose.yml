@@ -1,11 +1,3 @@
 version: '3'
 services:
-  askd-tendertracking-prod:
-    image: tendertracking:latest
-    ports:
-      - 8000:8080
-    environment:
-      CAS_URL: "https://askd.mos.ru/cas"
-      DM_AREA_TST1_USER: "DM_AREA_TST1"
-      DM_AREA_TST1_PASS: "jiklop0852"
-      DM_AREA_TST1_URL: "jdbc:oracle:thin:@localhost:1521:askdt"
+  test:
