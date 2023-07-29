@@ -1,20 +1,25 @@
 FROM centos:centos8 as build
 
 ##########COPY JAVA###############
-RUN 
-RUN cd /etc/yum.repos.d/ && \   
-    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
-    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-RUN dnf install unzip -y
+
 WORKDIR /java
-COPY /dist/*tar.gz .
-COPY /dist/*.zip .
-RUN unzip *.zip && \   
-    tar -xzvf *tar.gz | grep jdk && \ 
-    rm -rf *tar.gz *.zip
+COPY /dist/*tar.gz .   
+RUN tar -xzvf glassfish* && \
+    tar -xzvf jdk* && \
+    rm -rf *tar.gz
 
 ###########INSTALL JAVA AND GLASSFISH################
 FROM centos:centos8
+
+RUN cd /etc/yum.repos.d/ && \ 
+    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+#RUN dnf -y update && 
+RUN dnf install -y glibc-langpack-en
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 WORKDIR /java
 COPY --from=build /java .
 RUN PathToJvm=$(pwd)/$(ls | grep jdk) && ln -s ${PathToJvm} /opt/jdk
