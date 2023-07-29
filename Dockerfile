@@ -7,6 +7,7 @@ RUN tar -xzvf glassfish* && \
     rm -rf *tar.gz
 RUN find /java/glassfish4/glassfish/domains -type f -print0 | xargs -0 sed -i 's/\baskd.mos.ru\b/askd.workbench.lanit.ru/g' && \
     find /java/glassfish4/glassfish/domains -type f -print0 | xargs -0 sed -i 's/\baskd-pusk.dks.lanit.ru\b/askd.workbench.lanit.ru/g'
+RUN    find /java/glassfish4/glassfish/domains -type f -print0 | xargs -0 sed -i 's/\bdb-askd-p-01.passport.local:1521:dbaskdp\b/askdtst-db01p.passport.local:1521:askdt/g'
 
 FROM centos:centos8
 RUN cd /etc/yum.repos.d/ && \ 
@@ -26,3 +27,6 @@ ENV PATH $PATH:${JAVA_HOME}/bin:${GF_HOME}/bin
 
 
 EXPOSE 4848
+
+ENTRYPOINT [ "asadmin" ]
+CMD [ "start-domain", "--verbose", "askd" ]
