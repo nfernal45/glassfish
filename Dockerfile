@@ -1,19 +1,22 @@
-FROM alpine:3.18.2 as build
+FROM centos:centos8 as build
 
 ##########COPY JAVA###############
-RUN apk --no-progress --purge --no-cache upgrade
+RUN 
+RUN cd /etc/yum.repos.d/ && \   
+    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+RUN dnf install unzip -y
 WORKDIR /java
 COPY /dist/*tar.gz .
 COPY /dist/*.zip .
-RUN unzip *.zip
-RUN tar -xzvf *tar.gz | grep jdk && rm -rf *tar.gz *.zip
+RUN unzip *.zip && \   
+    tar -xzvf *tar.gz | grep jdk && \ 
+    rm -rf *tar.gz *.zip
 
 ###########INSTALL JAVA AND GLASSFISH################
-FROM alpine:3.18.2
+FROM centos:centos8
 WORKDIR /java
-COPY /dist/*.apk .
 COPY --from=build /java .
-RUN apk add --force-overwrite --allow-untrusted *.apk
 RUN PathToJvm=$(pwd)/$(ls | grep jdk) && ln -s ${PathToJvm} /opt/jdk
 RUN PathToGlassfish=$(pwd)/$(ls | grep glassfish*) && ln -s ${PathToGlassfish} /opt/glassfish4
 ENV JAVA_HOME=/opt/jdk GF_HOME=/opt/glassfish4
