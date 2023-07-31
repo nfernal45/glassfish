@@ -9,8 +9,9 @@ services:
       - ./nginx/glassfish.conf:/etc/nginx/conf.d/default.conf
 
   glassfish:
-    image: askd:test
+    image: glassfish:latest
     ports:
       - 4848:4848
-    #volumes:
-    #  - ./glassfish:/java/glassfish4/glassfish/domains/askd
+    volumes:
+      - ./dist/keystore/cacerts.jks:/java/glassfish4/glassfish/domains/askd/config/cacerts.jks
+      - ./dist/keystore/keystore.jks:/java/glassfish4/glassfish/domains/askd/config/keystore.jks
